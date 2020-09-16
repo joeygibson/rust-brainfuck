@@ -6,9 +6,16 @@ ported from [Go](https://golang.org) from an article by Thorsten Ball in
 
 ## Building
 
-Just run `cargo build` and you will get a `rust-brainfuck` executable
+Just run `cargo build` and you will get a `rust-brainfuck` executable. If you want any 
+kind of performance from it, run `cargo build --release` to get an optimized build. 
 
 ## Running
 
 Pass in the name of the file you want to execute
+
+## Execution time
+
+Running an optimized build against `tests/mandelbrot.b` took **9.55s**. Running a
+debug build on the same file took **158.11s**. 
+
 

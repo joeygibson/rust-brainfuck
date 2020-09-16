@@ -5,7 +5,7 @@ use crate::instruction::{Instruction, InstructionType};
 pub struct Machine<'a> {
     code: Vec<Instruction>,
     ip: usize,
-    memory: [u8; 30000],
+    memory: [u32; 30000],
     dp: usize,
     input: &'a mut BufReader<Box<dyn Read>>,
     output: &'a mut BufWriter<Box<dyn Write>>,
@@ -34,8 +34,8 @@ impl<'a> Machine<'a> {
             let instruction = &self.code[self.ip];
 
             match instruction.instruction_type {
-                InstructionType::Plus => self.memory[self.dp] += instruction.argument as u8,
-                InstructionType::Minus => self.memory[self.dp] -= instruction.argument as u8,
+                InstructionType::Plus => self.memory[self.dp] += instruction.argument as u32,
+                InstructionType::Minus => self.memory[self.dp] -= instruction.argument as u32,
                 InstructionType::Right => self.dp += instruction.argument,
                 InstructionType::Left => self.dp -= instruction.argument,
                 InstructionType::PutChar => {
@@ -76,11 +76,11 @@ impl<'a> Machine<'a> {
             panic!("wrong number of bytes read");
         }
 
-        self.memory[self.dp] = self.buf[0];
+        self.memory[self.dp] = self.buf[0] as u32;
     }
 
     pub fn put_char(&mut self) {
-        self.buf[0] = self.memory[self.dp];
+        self.buf[0] = self.memory[self.dp] as u8;
 
         let bytes_written = match self.output.write(&self.buf) {
             Ok(bytes_written) => bytes_written,
@@ -90,5 +90,7 @@ impl<'a> Machine<'a> {
         if bytes_written != 1 {
             panic!("wrong number of bytes written")
         }
+
+        self.output.flush();
     }
 }
