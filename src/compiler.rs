@@ -23,11 +23,17 @@ impl Compiler {
         }
     }
 
-    pub fn compile(&mut self) {
+    pub fn compile(&mut self) -> Result<(), String> {
         let mut loopstack: Vec<usize> = vec![];
+        let mut last_char: Option<char> = None;
+        let valid_chars = "+-><.,[]";
 
         while self.position < self.code_length {
             let current = self.code[self.position];
+
+            if last_char.is_some() && valid_chars.contains(current) && last_char.unwrap() != ';' {
+                return Err(format!("invalid code at position {}", self.position));
+            }
 
             match current {
                 '+' => self.compile_foldable_instruction(current, Plus),
@@ -60,7 +66,10 @@ impl Compiler {
             }
 
             self.position += 1;
+            last_char = Some(current);
         }
+
+        return Ok(());
     }
 
     fn compile_foldable_instruction(&mut self, the_char: char, instruction_type: InstructionType) {

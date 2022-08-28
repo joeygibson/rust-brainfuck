@@ -23,7 +23,13 @@ fn main() {
     };
 
     let mut compiler = Compiler::new(code);
-    compiler.compile();
+    match compiler.compile() {
+        Ok(..) => {},
+        Err(e) => {
+            println!("error compiling file: {}", e);
+            return;
+        }
+    }
 
     let mut reader: BufReader<Box<dyn Read>> = BufReader::new(Box::new(stdin()));
     let mut writer: BufWriter<Box<dyn Write>> = BufWriter::new(Box::new(stdout()));
